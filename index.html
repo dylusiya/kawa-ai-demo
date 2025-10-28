@@ -1,0 +1,1951 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kawa-AI - Key Assistant for Work Activity with AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #F5F8FA 0%, #E3F2FD 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            animation: slideDown 0.5s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .header-content {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1E88E5;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1E88E5 0%, #42A5F5 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-tab {
+            padding: 10px 20px;
+            background: transparent;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+        }
+
+        .nav-tab.active {
+            background: #1E88E5;
+            color: white;
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: #E3F2FD;
+            color: #1E88E5;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-top: 30px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .view {
+            display: none;
+        }
+
+        .view.active {
+            display: block;
+        }
+
+        /* Chat View */
+        .chat-container {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 20px;
+            height: calc(100vh - 180px);
+        }
+
+        .chat-box {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #075E54;
+            color: white;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .chat-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .chat-status {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #ECE5DD url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OEM3Q0I0NUExRTcyMTFFMkJEODREMzVBMTk5MzZEQTYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OEM3Q0I0NUIxRTcyMTFFMkJEODREMzVBMTk5MzZEQTYiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4QzdDQjQ1ODFFNzIxMUUyQkQ4NEQzNUExOTkzNkRBNiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4QzdDQjQ1OTFFNzIxMUUyQkQ4NEQzNUExOTkzNkRBNiIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QRgfGwcYiooKLAAAQIAAAwCrvyXxEOPCcAAAAABJRU5ErkJggg==');
+        }
+
+        .message {
+            margin-bottom: 15px;
+            animation: messageSlide 0.3s ease;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message.bot {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message.user {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 15px;
+            line-height: 1.5;
+        }
+
+        .message.bot .message-bubble {
+            background: white;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message.user .message-bubble {
+            background: #DCF8C6;
+            color: #000;
+            border-bottom-right-radius: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .message-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+            display: block;
+        }
+
+        .message.user .message-time::after {
+            content: ' ✓✓';
+            color: #4FC3F7;
+            font-weight: bold;
+        }
+
+        .classification-badge {
+            display: inline-block;
+            background: #E3F2FD;
+            color: #1E88E5;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 8px;
+            line-height: 1.4;
+        }
+
+        .evidence-badge {
+            display: inline-block;
+            background: #FFF4E5;
+            color: #F57C00;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            margin-top: 5px;
+            margin-left: 5px;
+            border: 1px solid #FFE0B2;
+        }
+
+        .link-preview {
+            background: #E8F5E9;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #2E7D32;
+            border-left: 3px solid #4CAF50;
+            word-break: break-all;
+        }
+
+        .chat-input-area {
+            padding: 20px;
+            background: white;
+            border-top: 1px solid #E0E0E0;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 25px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #075E54;
+        }
+
+        .btn-send {
+            padding: 12px 24px;
+            background: #25D366;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-send:hover {
+            background: #128C7E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar h3 {
+            color: #1E88E5;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .activity-summary {
+            background: #F5F8FA;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #E0E0E0;
+            align-items: center;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-label {
+            color: #666;
+            font-size: 12px;
+            line-height: 1.3;
+            flex: 1;
+        }
+
+        .summary-value {
+            color: #1E88E5;
+            font-weight: 600;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+
+        /* Dashboard View */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #1E88E5 0%, #42A5F5 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1E88E5;
+        }
+
+        .activities-table {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            padding: 25px;
+            overflow-x: auto;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-header h2 {
+            color: #1E88E5;
+            font-size: 20px;
+        }
+
+        .btn-generate {
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #1E88E5 0%, #42A5F5 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.4);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #F5F8FA;
+            padding: 12px 10px;
+            text-align: left;
+            font-weight: 600;
+            color: #333;
+            border-bottom: 2px solid #E0E0E0;
+            font-size: 12px;
+        }
+
+        td {
+            padding: 12px 10px;
+            border-bottom: 1px solid #F0F0F0;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        tr:hover {
+            background: #F5F8FA;
+        }
+
+        .category-badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 11px;
+            font-weight: 500;
+            line-height: 1.3;
+        }
+
+        .badge-0 { background: #E3F2FD; color: #1E88E5; }
+        .badge-1 { background: #FFF3E0; color: #F57C00; }
+        .badge-2 { background: #E8F5E9; color: #43A047; }
+        .badge-3 { background: #F3E5F5; color: #8E24AA; }
+        .badge-4 { background: #FCE4EC; color: #C2185B; }
+        .badge-5 { background: #E0F2F1; color: #00897B; }
+        .badge-6 { background: #FFF9C4; color: #F57F17; }
+        .badge-7 { background: #FFEBEE; color: #C62828; }
+        .badge-8 { background: #E8EAF6; color: #3F51B5; }
+        .badge-9 { background: #F1F8E9; color: #558B2F; }
+        .badge-10 { background: #EFEBE9; color: #5D4037; }
+        .badge-11 { background: #E0F7FA; color: #0097A7; }
+        .badge-12 { background: #FBE9E7; color: #D84315; }
+        .badge-13 { background: #F9FBE7; color: #827717; }
+
+        .btn-action {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 500;
+            margin: 2px;
+            transition: all 0.3s ease;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .btn-edit {
+            background: #2196F3;
+            color: white;
+        }
+
+        .btn-edit:hover {
+            background: #1976D2;
+        }
+
+        .btn-delete {
+            background: #F44336;
+            color: white;
+        }
+
+        .btn-delete:hover {
+            background: #D32F2F;
+        }
+
+        .btn-save {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-save:hover {
+            background: #388E3C;
+        }
+
+        .btn-cancel {
+            background: #9E9E9E;
+            color: white;
+        }
+
+        .btn-cancel:hover {
+            background: #757575;
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 6px;
+            border: 2px solid #2196F3;
+            border-radius: 5px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+        }
+
+        .edit-textarea {
+            width: 100%;
+            padding: 6px;
+            border: 2px solid #2196F3;
+            border-radius: 5px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 12px;
+            min-height: 60px;
+            resize: vertical;
+        }
+
+        .rk-filter {
+            padding: 8px 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            margin-left: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .rk-filter:focus {
+            outline: none;
+            border-color: #1E88E5;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 900px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #1E88E5;
+            font-size: 24px;
+        }
+
+        .btn-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        .btn-close:hover {
+            color: #1E88E5;
+        }
+
+        .report-section {
+            margin-bottom: 25px;
+        }
+
+        .report-section h3 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #E0E0E0;
+        }
+
+        .report-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .report-item {
+            background: #F5F8FA;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .report-item-label {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 5px;
+        }
+
+        .report-item-value {
+            color: #1E88E5;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .report-rk-item {
+            background: #F5F8FA;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .report-rk-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .report-rk-title {
+            font-size: 13px;
+            color: #333;
+            font-weight: 500;
+            flex: 1;
+            line-height: 1.4;
+        }
+
+        .report-rk-count {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1E88E5;
+            margin-left: 15px;
+        }
+
+        .btn-download {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #1E88E5 0%, #42A5F5 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 16px;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 136, 229, 0.4);
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 15px;
+            border-bottom-left-radius: 5px;
+            max-width: 80px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .typing-indicator.active {
+            display: flex;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #075E54;
+            border-radius: 50%;
+            animation: typingBounce 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typingBounce {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .chat-container {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                order: -1;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .report-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .btn-load-dummy {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+
+        .btn-load-dummy:hover {
+            background: #388E3C;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🤖</div>
+                <span>Kawa-AI</span>
+            </div>
+            <div class="nav-tabs">
+                <button class="nav-tab active" data-view="chat">💬 Chat</button>
+                <button class="nav-tab" data-view="dashboard">📊 Dashboard</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Chat View -->
+            <div class="view active" id="chat-view">
+                <div class="chat-container">
+                    <div class="chat-box">
+                        <div class="chat-header">
+                            <div class="chat-avatar">🤖</div>
+                            <div class="chat-info">
+                                <h3>Kawa-AI Assistant</h3>
+                                <div class="chat-status">● Online - Siap membantu Anda</div>
+                            </div>
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message bot">
+                                <div class="message-bubble">
+                                    Halo! 👋 Saya Kawa-AI, asisten digital Anda untuk mencatat aktivitas kerja BPS.<br><br>
+                                    Silakan ceritakan aktivitas apa yang sedang atau telah Anda kerjakan hari ini. Saya akan membantu mengklasifikasikannya ke dalam Rencana Kinerja (RK) yang sesuai dan mengubahnya menjadi narasi terstruktur!<br><br>
+                                    <small style="color: #666;">💡 <b>Tips:</b></small><br>
+                                    <small style="color: #666;">• Ceritakan aktivitas Anda dengan jelas</small><br>
+                                    <small style="color: #666;">• Kirim link bukti dukung (Google Drive, foto, dokumen)</small><br>
+                                    <small style="color: #666;">• Contoh: "internalisasi dan konsolidasi SE2026"</small>
+                                    <span class="message-time">Baru saja</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <div class="chat-input-wrapper">
+                                <input 
+                                    type="text" 
+                                    class="chat-input" 
+                                    id="messageInput" 
+                                    placeholder="Ketik aktivitas kerja Anda atau kirim link bukti..."
+                                    onkeypress="if(event.key === 'Enter') sendMessage()"
+                                >
+                                <button class="btn-send" onclick="sendMessage()">📤 Kirim</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="sidebar">
+                        <h3>📊 Ringkasan Hari Ini</h3>
+                        <div class="activity-summary">
+                            <div class="summary-item">
+                                <span class="summary-label">Total Aktivitas</span>
+                                <span class="summary-value" id="totalActivities">10</span>
+                            </div>
+                            <div id="categoryCounts"></div>
+                        </div>
+
+                        <h3>🔔 Pengingat Otomatis</h3>
+                        <div class="activity-summary">
+                            <p style="font-size: 13px; color: #666; line-height: 1.5;">
+                                Saya akan mengirimkan pengingat otomatis setiap 2 jam untuk membantu Anda mendokumentasikan aktivitas kerja.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard View -->
+            <div class="view" id="dashboard-view">
+                <div class="dashboard-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">📝</div>
+                        <div class="stat-label">Total Aktivitas Bulan Ini</div>
+                        <div class="stat-value" id="dashTotalActivities">10</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">🎯</div>
+                        <div class="stat-label">Kategori RK Tercatat</div>
+                        <div class="stat-value" id="dashTotalCategories">7</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-label">Hari Aktif</div>
+                        <div class="stat-value" id="activeDays">5</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">📊</div>
+                        <div class="stat-label">Rata-rata per Hari</div>
+                        <div class="stat-value" id="avgPerDay">2.0</div>
+                    </div>
+                </div>
+
+                <div class="activities-table">
+                    <div class="table-header">
+                        <h2>📋 Daftar Aktivitas Kerja</h2>
+                        <div>
+                            <select class="rk-filter" id="rkFilter" onchange="filterByRK()">
+                                <option value="">Semua RK</option>
+                            </select>
+                            <button class="btn-load-dummy" onclick="loadDummyData()">
+                                🔄 Load 10 Data Dummy
+                            </button>
+                            <button class="btn-generate" onclick="showReportOptions()">
+                                📄 Generate Laporan
+                            </button>
+                        </div>
+                    </div>
+                    <table id="activitiesTable">
+                        <thead>
+                            <tr>
+                                <th style="width: 35px;">No</th>
+                                <th style="width: 110px;">Tanggal</th>
+                                <th style="width: 160px;">Aktivitas (Input User)</th>
+                                <th style="width: 240px;">Kegiatan (Narasi AI)</th>
+                                <th style="width: 200px;">Capaian</th>
+                                <th style="width: 180px;">Kategori RK</th>
+                                <th style="width: 60px;">Bukti</th>
+                                <th style="width: 100px;">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody">
+                            <tr>
+                                <td colspan="8" style="text-align: center; color: #999; padding: 40px;">
+                                    Klik tombol "Load 10 Data Dummy" untuk melihat contoh data atau mulai chat dengan Kawa-AI!
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Laporan -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>📄 Laporan Bulanan Kinerja ASN</h2>
+                <button class="btn-close" onclick="closeModal()">×</button>
+            </div>
+
+            <div class="report-section">
+                <h3>Informasi ASN</h3>
+                <div class="report-grid">
+                    <div class="report-item">
+                        <div class="report-item-label">Nama ASN</div>
+                        <div class="report-item-value">Budi Santoso, S.Kom</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">NIP</div>
+                        <div class="report-item-value">199001012020121001</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Jabatan</div>
+                        <div class="report-item-value">Analis Sistem Informasi</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Periode Laporan</div>
+                        <div class="report-item-value" id="reportPeriod"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="report-section">
+                <h3>Ringkasan Aktivitas per Kategori RK</h3>
+                <div id="reportSummary"></div>
+            </div>
+
+            <div class="report-section" id="detailSection" style="display: none;">
+                <h3>Detail Aktivitas <span id="detailRKTitle"></span></h3>
+                <div id="reportDetail"></div>
+            </div>
+
+            <div class="report-section">
+                <h3>Statistik Kinerja</h3>
+                <div class="report-grid">
+                    <div class="report-item">
+                        <div class="report-item-label">Total Aktivitas</div>
+                        <div class="report-item-value" id="reportTotalActivities">0</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Hari Kerja Aktif</div>
+                        <div class="report-item-value" id="reportActiveDays">0</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Rata-rata per Hari</div>
+                        <div class="report-item-value" id="reportAvgPerDay">0</div>
+                    </div>
+                    <div class="report-item">
+                        <div class="report-item-label">Bukti Dukung</div>
+                        <div class="report-item-value" id="reportEvidenceCount">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn-download" onclick="downloadReport()">
+                📥 Unduh Laporan (PDF)
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal Pilihan Laporan -->
+    <div class="modal" id="reportOptionsModal">
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h2>📊 Pilih Jenis Laporan</h2>
+                <button class="btn-close" onclick="closeReportOptions()">×</button>
+            </div>
+
+            <div style="padding: 20px 0;">
+                <button class="btn-download" onclick="generateReport('all')" style="margin-bottom: 15px;">
+                    📄 Laporan Lengkap (Semua RK)
+                </button>
+                
+                <h3 style="color: #333; font-size: 16px; margin: 20px 0 15px 0;">Atau Pilih per RK:</h3>
+                
+                <div id="rkReportOptions"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // RK Categories
+        const RK_CATEGORIES = [
+            "Peningkatan kualitas layanan aplikasi dan sistem informasi yang andal",
+            "Peningkatan kualitas tahapan Pengolahan (Process), Analisis (Analyse) dan Evaluasi (Evaluate) pada kegiatan statistik dengan memanfaatkan teknologi informasi",
+            "Peningkatan kualitas Tata Kelola dan Manajemen Resiko pada layanan Teknologi Informasi",
+            "Tersedianya metodologi dan wilayah kerja statistik yang mutakhir",
+            "Peningkatan kualitas pilar manajemen perubahan pada pembangunan Zona Integritas menuju Wilayah Bebas dari Korupsi",
+            "Peningkatan pengelolaan SDM dan kepegawaian yang profesional",
+            "Peningkatan kualitas penyediaan data dan informasi statistik melalui website BPS dan media lain yang lengkap dan up to date",
+            "Terwujudnya pelayanan PST yang profesional dan terpadu",
+            "Peningkatan kualitas pembinaan penyelenggaraan statistik sektoral yang sesuai profesional dan terpadu",
+            "Peningkatan kualitas pemantauan dan evaluasi penyelenggaran pelayanan publik yang prima",
+            "Peningkatan kualitas Tata Kelola dan Manajemen Resiko pada pelayanan publik",
+            "Peningkatan kualitas Tata Kelola dan Manajemen Resiko pengelolaan website",
+            "Terwujudnya Sistem Manajemen Mutu yang profesional pada Pelayanan Statistik Terpadu",
+            "Peningkatan kualitas pengendalian internal dan sistem pengaduan yang efektif dan efisien"
+        ];
+
+        // Keyword mapping
+        const CATEGORY_KEYWORDS = {
+            0: ['aplikasi', 'sistem informasi', 'software', 'database', 'server', 'maintenance', 'bug', 'deploy', 'update aplikasi', 'sistem', 'andal', 'layanan ti', 'infrastruktur'],
+            1: ['pengolahan data', 'analisis', 'evaluasi', 'process', 'analyse', 'evaluate', 'statistik', 'menganalisis', 'sensus', 'survei', 'data statistik', 'olah data'],
+            2: ['tata kelola', 'manajemen resiko', 'risk management', 'governance', 'iso', 'audit ti', 'keamanan sistem', 'compliance', 'security'],
+            3: ['metodologi', 'wilayah kerja', 'pemetaan', 'updating', 'mutakhir', 'standar', 'prosedur', 'sop'],
+            4: ['zona integritas', 'wbk', 'manajemen perubahan', 'change management', 'integritas', 'antikorupsi', 'bebas korupsi', 'internalisasi', 'konsolidasi', 'akhlak', 'ber-akhlak'],
+            5: ['sdm', 'kepegawaian', 'pegawai', 'rekrutmen', 'pelatihan', 'training', 'diklat', 'bimtek', 'kompetensi', 'asesmen', 'coaching'],
+            6: ['website', 'portal', 'media sosial', 'publikasi', 'informasi', 'konten', 'bps.go.id', 'update website', 'berita'],
+            7: ['pst', 'pelayanan statistik terpadu', 'konsultasi statistik', 'customer service', 'frontline', 'loket'],
+            8: ['pembinaan', 'statistik sektoral', 'koordinasi', 'kerjasama', 'kementerian', 'pemda', 'skpd'],
+            9: ['pemantauan', 'monitoring', 'evaluasi pelayanan', 'survei kepuasan', 'quality control', 'skm'],
+            10: ['tata kelola pelayanan', 'manajemen resiko pelayanan', 'risk pelayanan publik', 'complaint handling'],
+            11: ['manajemen resiko website', 'keamanan website', 'backup', 'disaster recovery', 'cdn'],
+            12: ['smm', 'sistem manajemen mutu', 'iso 9001', 'quality management', 'mutu', 'standar mutu'],
+            13: ['pengendalian internal', 'internal control', 'pengaduan', 'whistleblowing', 'sistem pengaduan', 'complaint']
+        };
+
+        // Database
+        let activitiesDatabase = [];
+        let reminderInterval;
+        let messageCount = 0;
+        let waitingForEvidence = false;
+        let lastActivityId = null;
+        let editingId = null;
+        let currentFilter = '';
+        let waitingForClarification = false;
+        let incompleteActivity = null;
+
+        // Fungsi untuk validasi apakah input masuk akal
+        function isValidInput(text) {
+            // Cek apakah terlalu pendek
+            if (text.length < 3) return false;
+            
+            // Cek apakah ada kata yang masuk akal (minimal ada huruf vokal)
+            const hasVowels = /[aiueoAIUEO]/.test(text);
+            if (!hasVowels) return false;
+            
+            // Cek apakah random characters (terlalu banyak konsonan berurutan)
+            const consecutiveConsonants = /[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]{5,}/.test(text);
+            if (consecutiveConsonants) return false;
+            
+            // Cek apakah hanya karakter acak (pola keyboard)
+            const keyboardPatterns = /^(asdf|qwer|zxcv|hjkl|uiop|nmkl|ahsd|asdg)+$/i;
+            if (keyboardPatterns.test(text)) return false;
+            
+            return true;
+        }
+
+        // Fungsi untuk mengecek apakah input terlalu singkat/tidak spesifik
+        function needsClarification(text) {
+            const input = text.toLowerCase().trim();
+            
+            // Kata-kata yang terlalu umum dan perlu detail
+            const vagueWords = [
+                'rapat', 'meeting', 'koordinasi', 'diskusi',
+                'pelatihan', 'training', 'diklat',
+                'analisis', 'evaluasi', 'kajian',
+                'laporan', 'dokumen', 'surat',
+                'maintenance', 'perbaikan', 'update',
+                'pelayanan', 'konsultasi',
+                'monitoring', 'pemantauan'
+            ];
+            
+            // Cek apakah hanya kata tunggal dari vague words
+            const words = input.split(/\s+/);
+            if (words.length === 1 && vagueWords.includes(input)) {
+                return true;
+            }
+            
+            // Cek apakah terlalu pendek (kurang dari 3 kata)
+            if (words.length < 3 && !input.includes('http')) {
+                return true;
+            }
+            
+            return false;
+        }
+
+        // Fungsi untuk generate pertanyaan klarifikasi
+        function generateClarificationQuestion(text) {
+            const input = text.toLowerCase().trim();
+            
+            if (input.includes('rapat') || input.includes('meeting')) {
+                return 'Rapat tentang apa ya? Bisa kasih detail lebih lengkap? 🤔<br><small style="color: #666;">💡 Contoh: "Rapat koordinasi persiapan SE2026"</small>';
+            } else if (input.includes('pelatihan') || input.includes('training')) {
+                return 'Pelatihan apa nih? Tolong sebutkan topik atau materinya ya 📚<br><small style="color: #666;">💡 Contoh: "Pelatihan penggunaan aplikasi SIMDA"</small>';
+            } else if (input.includes('analisis') || input.includes('evaluasi')) {
+                return 'Analisis/evaluasi tentang apa? Bisa lebih spesifik? 📊<br><small style="color: #666;">💡 Contoh: "Analisis data survei ekonomi Q4"</small>';
+            } else if (input.includes('laporan') || input.includes('dokumen')) {
+                return 'Laporan/dokumen apa yang dikerjakan? 📝<br><small style="color: #666;">💡 Contoh: "Menyusun laporan evaluasi kinerja bulanan"</small>';
+            } else if (input.includes('maintenance') || input.includes('perbaikan')) {
+                return 'Maintenance apa yang dilakukan? Sistem/aplikasi apa? ⚙️<br><small style="color: #666;">💡 Contoh: "Maintenance server database SAKERNAS"</small>';
+            } else if (input.includes('pelayanan') || input.includes('konsultasi')) {
+                return 'Pelayanan/konsultasi untuk siapa atau tentang apa? 🤝<br><small style="color: #666;">💡 Contoh: "Memberikan konsultasi statistik kepada mahasiswa"</small>';
+            } else {
+                return 'Hmm, bisa tolong jelaskan lebih detail aktivitasnya? Saya butuh info yang lebih lengkap ya 😊<br><small style="color: #666;">💡 Coba tambahkan: topik, tujuan, atau objek dari aktivitas Anda</small>';
+            }
+        }
+
+        // AI Functions
+        function detectURL(text) {
+            const urlPattern = /(https?:\/\/[^\s]+)/g;
+            return text.match(urlPattern);
+        }
+
+        function isOnlyLink(text) {
+            const urlPattern = /^(https?:\/\/[^\s]+)$/;
+            return urlPattern.test(text.trim());
+        }
+
+        function classifyActivity(text) {
+            text = text.toLowerCase();
+            let scores = {};
+            
+            for (let categoryId = 0; categoryId < RK_CATEGORIES.length; categoryId++) {
+                scores[categoryId] = 0;
+                const keywords = CATEGORY_KEYWORDS[categoryId];
+                
+                keywords.forEach(keyword => {
+                    if (text.includes(keyword)) {
+                        scores[categoryId] += keyword.split(' ').length;
+                    }
+                });
+            }
+            
+            let maxScore = 0;
+            let bestCategory = 0;
+            
+            for (let categoryId in scores) {
+                if (scores[categoryId] > maxScore) {
+                    maxScore = scores[categoryId];
+                    bestCategory = parseInt(categoryId);
+                }
+            }
+            
+            if (maxScore === 0) {
+                bestCategory = 0;
+            }
+            
+            return bestCategory;
+        }
+
+        // AI Narasi Generator - Mengubah input user menjadi narasi terstruktur
+        function generateNarasi(userInput, categoryId) {
+            const input = userInput.toLowerCase();
+            
+            // Deteksi pola aktivitas
+            let narasi = '';
+            
+            if (input.includes('internalisasi') || input.includes('konsolidasi') || input.includes('sosialisasi')) {
+                narasi = `Mengikuti kegiatan peningkatan pemahaman dan implementasi ber-AKHLAK yaitu Kegiatan ${capitalizeWords(userInput)}`;
+            } else if (input.includes('rapat') || input.includes('meeting') || input.includes('koordinasi')) {
+                narasi = `Mengikuti kegiatan koordinasi dan diskusi yaitu ${capitalizeWords(userInput)}`;
+            } else if (input.includes('pelatihan') || input.includes('training') || input.includes('diklat') || input.includes('bimtek')) {
+                narasi = `Mengikuti kegiatan peningkatan kompetensi dan kapasitas yaitu ${capitalizeWords(userInput)}`;
+            } else if (input.includes('maintenance') || input.includes('perbaikan') || input.includes('update sistem')) {
+                narasi = `Melaksanakan kegiatan pemeliharaan dan peningkatan kualitas sistem yaitu ${capitalizeWords(userInput)}`;
+            } else if (input.includes('analisis') || input.includes('evaluasi') || input.includes('kajian')) {
+                narasi = `Melakukan kegiatan analisis dan evaluasi data yaitu ${capitalizeWords(userInput)}`;
+            } else if (input.includes('pelayanan') || input.includes('konsultasi') || input.includes('melayani')) {
+                narasi = `Memberikan kegiatan layanan dan konsultasi yaitu ${capitalizeWords(userInput)}`;
+            } else if (input.includes('update') || input.includes('publikasi') || input.includes('website')) {
+                narasi = `Melaksanakan kegiatan pemutakhiran dan penyediaan informasi yaitu ${capitalizeWords(userInput)}`;
+            } else if (input.includes('surat') || input.includes('dokumen') || input.includes('arsip')) {
+                narasi = `Melakukan kegiatan administrasi dan dokumentasi yaitu ${capitalizeWords(userInput)}`;
+            } else if (input.includes('monitoring') || input.includes('pemantauan') || input.includes('pengawasan')) {
+                narasi = `Melakukan kegiatan pemantauan dan evaluasi yaitu ${capitalizeWords(userInput)}`;
+            } else {
+                // Default
+                narasi = `Melaksanakan kegiatan ${capitalizeWords(userInput)}`;
+            }
+            
+            return narasi;
+        }
+
+        // Generate Capaian
+        function generateCapaian(userInput) {
+            const input = userInput.toLowerCase();
+            let capaian = '';
+            
+            if (input.includes('internalisasi') || input.includes('konsolidasi') || input.includes('sosialisasi')) {
+                capaian = `Terlaksananya keikutsertaan dalam ${capitalizeWords(userInput)} sebanyak 1 kegiatan`;
+            } else if (input.includes('rapat') || input.includes('meeting') || input.includes('koordinasi')) {
+                capaian = `Terlaksananya keikutsertaan dalam ${capitalizeWords(userInput)} sebanyak 1 kali pertemuan`;
+            } else if (input.includes('pelatihan') || input.includes('training') || input.includes('diklat')) {
+                capaian = `Terlaksananya keikutsertaan dalam ${capitalizeWords(userInput)} sebanyak 1 kegiatan pengembangan kompetensi`;
+            } else if (input.includes('maintenance') || input.includes('perbaikan')) {
+                capaian = `Terlaksananya ${capitalizeWords(userInput)} sebanyak 1 sistem/aplikasi`;
+            } else if (input.includes('analisis') || input.includes('evaluasi')) {
+                capaian = `Terselesaikannya ${capitalizeWords(userInput)} sebanyak 1 dokumen analisis`;
+            } else if (input.includes('pelayanan') || input.includes('konsultasi')) {
+                capaian = `Terlaksananya ${capitalizeWords(userInput)} kepada 1 pemohon/stakeholder`;
+            } else if (input.includes('update') || input.includes('publikasi')) {
+                capaian = `Terlaksananya ${capitalizeWords(userInput)} sebanyak 1 konten/informasi`;
+            } else if (input.includes('surat') || input.includes('dokumen')) {
+                capaian = `Terselesaikannya ${capitalizeWords(userInput)} sebanyak 1 dokumen`;
+            } else {
+                capaian = `Terlaksananya ${capitalizeWords(userInput)} sebanyak 1 kegiatan`;
+            }
+            
+            return capaian;
+        }
+
+        function capitalizeWords(str) {
+            return str.split(' ').map(word => 
+                word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+            ).join(' ');
+        }
+
+        // Chat Functions
+        function addMessage(content, isBot = false, showClassification = false, categoryId = null) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isBot ? 'bot' : 'user'}`;
+            
+            const now = new Date();
+            const time = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+            
+            let classificationHtml = '';
+            if (showClassification && categoryId !== null) {
+                const categoryName = RK_CATEGORIES[categoryId];
+                classificationHtml = `<span class="classification-badge">📂 RK: ${categoryName}</span>`;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-bubble">
+                    ${content}
+                    ${classificationHtml}
+                    <span class="message-time">${time}</span>
+                </div>
+            `;
+            
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function showTypingIndicator() {
+            const messagesContainer = document.getElementById('chatMessages');
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'message bot';
+            typingDiv.id = 'typingIndicator';
+            typingDiv.innerHTML = `
+                <div class="typing-indicator active">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+            `;
+            messagesContainer.appendChild(typingDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function removeTypingIndicator() {
+            const typingDiv = document.getElementById('typingIndicator');
+            if (typingDiv) {
+                typingDiv.remove();
+            }
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            addMessage(message, false);
+            input.value = '';
+            
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                removeTypingIndicator();
+                
+                // Jika sedang menunggu klarifikasi
+                if (waitingForClarification && incompleteActivity) {
+                    // User memberikan detail tambahan
+                    const fullActivity = incompleteActivity + ' ' + message;
+                    
+                    // Validasi lagi
+                    if (!isValidInput(message)) {
+                        addMessage('Maaf, saya masih kurang paham. Bisa dijelaskan dengan kata-kata yang lebih jelas? 😅', true);
+                        return;
+                    }
+                    
+                    // Proses dengan aktivitas lengkap
+                    waitingForClarification = false;
+                    processActivity(fullActivity);
+                    incompleteActivity = null;
+                    return;
+                }
+                
+                // Jika sedang menunggu bukti dukung
+                if (waitingForEvidence && lastActivityId) {
+                    const urls = detectURL(message);
+                    
+                    if (urls && urls.length > 0) {
+                        const activity = activitiesDatabase.find(a => a.id === lastActivityId);
+                        if (activity) {
+                            activity.evidence.push(...urls);
+                            
+                            let evidenceHtml = urls.map(url => 
+                                `<div class="link-preview">🔗 ${url}</div>`
+                            ).join('');
+                            
+                            addMessage(`Terima kasih! Bukti dukung berhasil ditambahkan. ✅${evidenceHtml}`, true);
+                            
+                            waitingForEvidence = false;
+                            lastActivityId = null;
+                            
+                            updateSummary();
+                            updateDashboard();
+                        }
+                    } else if (isOnlyLink(message)) {
+                        addMessage('Link tidak valid. Pastikan link dimulai dengan http:// atau https://', true);
+                    } else {
+                        addMessage('Baik, tidak masalah. Anda bisa menambahkan bukti dukung nanti. 👍', true);
+                        waitingForEvidence = false;
+                        lastActivityId = null;
+                    }
+                    return;
+                }
+                
+                // Validasi input tidak jelas atau random
+                if (!isValidInput(message)) {
+                    const errorMessages = [
+                        'Waduh, saya kurang paham dengan yang Anda ketik 😅<br>Bisa tulis ulang dengan kata-kata yang lebih jelas?',
+                        'Hmm, sepertinya ada kesalahan ketik nih 🤔<br>Coba ketik ulang aktivitasnya ya!',
+                        'Maaf, saya tidak mengerti input tersebut 😊<br>Bisa dijelaskan dengan kalimat yang lebih jelas?'
+                    ];
+                    const randomError = errorMessages[Math.floor(Math.random() * errorMessages.length)];
+                    addMessage(randomError, true);
+                    return;
+                }
+                
+                // Cek apakah input terlalu singkat/tidak spesifik
+                if (needsClarification(message)) {
+                    waitingForClarification = true;
+                    incompleteActivity = message;
+                    const question = generateClarificationQuestion(message);
+                    addMessage(question, true);
+                    return;
+                }
+                
+                // Deteksi apakah pesan hanya berisi link
+                if (isOnlyLink(message) && activitiesDatabase.length > 0) {
+                    const lastActivity = activitiesDatabase[activitiesDatabase.length - 1];
+                    lastActivity.evidence.push(message);
+                    
+                    addMessage(`Bukti dukung berhasil ditambahkan ke aktivitas sebelumnya! ✅<div class="link-preview">🔗 ${message}</div>`, true);
+                    
+                    updateSummary();
+                    updateDashboard();
+                    return;
+                }
+                
+                // Proses aktivitas normal
+                processActivity(message);
+                
+            }, 1000 + Math.random() * 1000);
+        }
+
+        function processActivity(message) {
+            const categoryId = classifyActivity(message);
+            const urls = detectURL(message);
+            const narasi = generateNarasi(message, categoryId);
+            const capaian = generateCapaian(message);
+            
+            const activity = {
+                id: Date.now(),
+                text: message,
+                narasi: narasi,
+                capaian: capaian,
+                categoryId: categoryId,
+                categoryName: RK_CATEGORIES[categoryId],
+                timestamp: new Date(),
+                evidence: urls ? [...urls] : []
+            };
+            activitiesDatabase.push(activity);
+            lastActivityId = activity.id;
+            
+            const responses = [
+                `Terima kasih! Saya telah mencatat aktivitas Anda. ✅`,
+                `Baik, aktivitas Anda sudah tersimpan! 👍`,
+                `Noted! Aktivitas berhasil didokumentasikan. 📝`,
+                `Sip! Sudah saya catat ya. ✨`,
+                `Perfect! Data sudah masuk ke sistem. 🎯`
+            ];
+            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+            
+            let evidenceDisplay = '';
+            if (urls && urls.length > 0) {
+                evidenceDisplay = '<span class="evidence-badge">📎 ' + urls.length + ' bukti dukung</span>';
+            }
+            
+            addMessage(randomResponse + evidenceDisplay + '<br><small style="color:#666;">📝 Narasi: ' + narasi + '</small>', true, true, categoryId);
+            
+            // Tanya bukti dukung jika belum ada
+            if (!urls || urls.length === 0) {
+                setTimeout(() => {
+                    addMessage('Apakah ada bukti dukung untuk aktivitas ini? (foto/link/dokumen)<br><small style="color: #666;">💡 Kirim link Google Drive, screenshot, atau dokumen pendukung</small>', true);
+                    waitingForEvidence = true;
+                }, 1000);
+            }
+            
+            updateSummary();
+            updateDashboard();
+        }
+
+        function updateSummary() {
+            const counts = {};
+            RK_CATEGORIES.forEach((_, idx) => counts[idx] = 0);
+            
+            activitiesDatabase.forEach(activity => {
+                counts[activity.categoryId]++;
+            });
+            
+            document.getElementById('totalActivities').textContent = activitiesDatabase.length;
+            
+            const categoryCountsHtml = Object.entries(counts)
+                .filter(([id, count]) => count > 0)
+                .map(([id, count]) => `
+                    <div class="summary-item">
+                        <span class="summary-label">${RK_CATEGORIES[id].substring(0, 40)}...</span>
+                        <span class="summary-value">${count}</span>
+                    </div>
+                `).join('');
+            
+            document.getElementById('categoryCounts').innerHTML = categoryCountsHtml;
+        }
+
+        function updateDashboard() {
+            const total = activitiesDatabase.length;
+            const uniqueDays = new Set(activitiesDatabase.map(a => 
+                a.timestamp.toDateString()
+            )).size;
+            const avgPerDay = uniqueDays > 0 ? (total / uniqueDays).toFixed(1) : 0;
+            const uniqueCategories = new Set(activitiesDatabase.map(a => a.categoryId)).size;
+            
+            document.getElementById('dashTotalActivities').textContent = total;
+            document.getElementById('dashTotalCategories').textContent = uniqueCategories;
+            document.getElementById('activeDays').textContent = uniqueDays;
+            document.getElementById('avgPerDay').textContent = avgPerDay;
+            
+            // Update filter dropdown
+            updateRKFilter();
+            
+            const tableBody = document.getElementById('tableBody');
+            if (total === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: #999; padding: 40px;">
+                            Klik tombol "Load 10 Data Dummy" untuk melihat contoh data atau mulai chat dengan Kawa-AI!
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tableBody.innerHTML = '';
+            
+            // Filter data
+            let filteredData = activitiesDatabase;
+            if (currentFilter) {
+                filteredData = activitiesDatabase.filter(a => a.categoryId === parseInt(currentFilter));
+            }
+            
+            if (filteredData.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; color: #999; padding: 40px;">
+                            Tidak ada aktivitas untuk RK yang dipilih.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            filteredData.forEach((activity, index) => {
+                const date = activity.timestamp.toLocaleDateString('id-ID', { 
+                    day: '2-digit', 
+                    month: 'short', 
+                    year: 'numeric' 
+                });
+                const time = activity.timestamp.toLocaleTimeString('id-ID', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                const badgeClass = `badge-${activity.categoryId}`;
+                
+                const row = document.createElement('tr');
+                row.id = `row-${activity.id}`;
+                
+                if (editingId === activity.id) {
+                    // Edit mode
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${date}<br><small style="color: #999;">${time}</small></td>
+                        <td><input type="text" class="edit-input" id="edit-text-${activity.id}" value="${escapeHtml(activity.text)}"></td>
+                        <td><textarea class="edit-textarea" id="edit-narasi-${activity.id}">${escapeHtml(activity.narasi)}</textarea></td>
+                        <td><textarea class="edit-textarea" id="edit-capaian-${activity.id}">${escapeHtml(activity.capaian)}</textarea></td>
+                        <td><span class="category-badge ${badgeClass}">${activity.categoryName.substring(0, 30)}...</span></td>
+                        <td style="text-align: center;">${activity.evidence.length > 0 ? '📎 ' + activity.evidence.length : '-'}</td>
+                        <td style="text-align: center;">
+                            <button class="btn-action btn-save" onclick="saveEdit(${activity.id})">💾</button>
+                            <button class="btn-action btn-cancel" onclick="cancelEdit()">✖</button>
+                        </td>
+                    `;
+                } else {
+                    // View mode
+                    row.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td>${date}<br><small style="color: #999;">${time}</small></td>
+                        <td>${activity.text}</td>
+                        <td><small>${activity.narasi}</small></td>
+                        <td><small>${activity.capaian}</small></td>
+                        <td><span class="category-badge ${badgeClass}">${activity.categoryName.substring(0, 30)}...</span></td>
+                        <td style="text-align: center;">${activity.evidence.length > 0 ? '📎 ' + activity.evidence.length : '-'}</td>
+                        <td style="text-align: center;">
+                            <button class="btn-action btn-edit" onclick="editActivity(${activity.id})">✏️</button>
+                            <button class="btn-action btn-delete" onclick="deleteActivity(${activity.id})">🗑️</button>
+                        </td>
+                    `;
+                }
+                tableBody.appendChild(row);
+            });
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        function editActivity(id) {
+            editingId = id;
+            updateDashboard();
+        }
+
+        function saveEdit(id) {
+            const activity = activitiesDatabase.find(a => a.id === id);
+            if (!activity) return;
+            
+            const newText = document.getElementById(`edit-text-${id}`).value.trim();
+            const newNarasi = document.getElementById(`edit-narasi-${id}`).value.trim();
+            const newCapaian = document.getElementById(`edit-capaian-${id}`).value.trim();
+            
+            if (!newText || !newNarasi || !newCapaian) {
+                alert('⚠️ Semua field harus diisi!');
+                return;
+            }
+            
+            activity.text = newText;
+            activity.narasi = newNarasi;
+            activity.capaian = newCapaian;
+            
+            // Re-classify jika text berubah
+            activity.categoryId = classifyActivity(newText);
+            activity.categoryName = RK_CATEGORIES[activity.categoryId];
+            
+            editingId = null;
+            updateDashboard();
+            updateSummary();
+            
+            alert('✅ Data berhasil diupdate!');
+        }
+
+        function cancelEdit() {
+            editingId = null;
+            updateDashboard();
+        }
+
+        function deleteActivity(id) {
+            if (confirm('❌ Apakah Anda yakin ingin menghapus aktivitas ini?')) {
+                activitiesDatabase = activitiesDatabase.filter(a => a.id !== id);
+                updateDashboard();
+                updateSummary();
+                alert('✅ Data berhasil dihapus!');
+            }
+        }
+
+        function updateRKFilter() {
+            const filter = document.getElementById('rkFilter');
+            if (!filter) return;
+            
+            // Get unique RK categories from database
+            const usedCategories = [...new Set(activitiesDatabase.map(a => a.categoryId))].sort((a, b) => a - b);
+            
+            let options = '<option value="">📊 Semua RK</option>';
+            usedCategories.forEach(catId => {
+                const count = activitiesDatabase.filter(a => a.categoryId === catId).length;
+                options += `<option value="${catId}">${RK_CATEGORIES[catId].substring(0, 50)}... (${count})</option>`;
+            });
+            
+            filter.innerHTML = options;
+            filter.value = currentFilter;
+        }
+
+        function filterByRK() {
+            currentFilter = document.getElementById('rkFilter').value;
+            updateDashboard();
+        }
+
+        function showReportOptions() {
+            if (activitiesDatabase.length === 0) {
+                alert('Belum ada aktivitas yang tercatat. Silakan chat dengan Kawa-AI atau load data dummy terlebih dahulu!');
+                return;
+            }
+            
+            const modal = document.getElementById('reportOptionsModal');
+            const optionsContainer = document.getElementById('rkReportOptions');
+            
+            // Get unique categories
+            const usedCategories = [...new Set(activitiesDatabase.map(a => a.categoryId))].sort((a, b) => a - b);
+            
+            let optionsHtml = '';
+            usedCategories.forEach(catId => {
+                const count = activitiesDatabase.filter(a => a.categoryId === catId).length;
+                optionsHtml += `
+                    <button class="btn-download" onclick="generateReport(${catId})" style="margin-bottom: 10px; background: linear-gradient(135deg, #43A047 0%, #66BB6A 100%);">
+                        📑 ${RK_CATEGORIES[catId].substring(0, 55)}... (${count} aktivitas)
+                    </button>
+                `;
+            });
+            
+            optionsContainer.innerHTML = optionsHtml;
+            modal.classList.add('active');
+        }
+
+        function closeReportOptions() {
+            document.getElementById('reportOptionsModal').classList.remove('active');
+        }
+
+        function loadDummyData() {
+            // Clear existing data
+            activitiesDatabase = [];
+            
+            // 10 Data Dummy
+            const dummyData = [
+                {
+                    text: "Internalisasi dan Konsolidasi SE2026",
+                    categoryId: 4,
+                    daysAgo: 1,
+                    evidence: ['https://drive.google.com/file/SE2026']
+                },
+                {
+                    text: "Maintenance server aplikasi SAKERNAS",
+                    categoryId: 0,
+                    daysAgo: 1,
+                    evidence: []
+                },
+                {
+                    text: "Menganalisis data survei ekonomi nasional Q4",
+                    categoryId: 1,
+                    daysAgo: 2,
+                    evidence: ['https://docs.google.com/spreadsheets/survei-ekonomi']
+                },
+                {
+                    text: "Pelatihan penggunaan sistem SIMDA kepada pegawai",
+                    categoryId: 5,
+                    daysAgo: 3,
+                    evidence: ['https://drive.google.com/photos/pelatihan']
+                },
+                {
+                    text: "Update konten website BPS dengan data terbaru",
+                    categoryId: 6,
+                    daysAgo: 3,
+                    evidence: []
+                },
+                {
+                    text: "Melayani konsultasi statistik di loket PST",
+                    categoryId: 7,
+                    daysAgo: 4,
+                    evidence: []
+                },
+                {
+                    text: "Koordinasi dengan Kementerian PUPR terkait data statistik",
+                    categoryId: 8,
+                    daysAgo: 4,
+                    evidence: ['https://meet.google.com/koordinasi-pupr']
+                },
+                {
+                    text: "Monitoring pelaksanaan survei lapangan",
+                    categoryId: 9,
+                    daysAgo: 5,
+                    evidence: ['https://forms.google.com/monitoring']
+                },
+                {
+                    text: "Audit keamanan sistem informasi",
+                    categoryId: 2,
+                    daysAgo: 5,
+                    evidence: []
+                },
+                {
+                    text: "Menyusun laporan pengendalian internal bulanan",
+                    categoryId: 13,
+                    daysAgo: 6,
+                    evidence: ['https://drive.google.com/docs/laporan-internal']
+                }
+            ];
+            
+            // Process dummy data
+            dummyData.forEach((data, index) => {
+                const date = new Date();
+                date.setDate(date.getDate() - data.daysAgo);
+                date.setHours(9 + index, 30, 0, 0);
+                
+                const narasi = generateNarasi(data.text, data.categoryId);
+                const capaian = generateCapaian(data.text);
+                
+                activitiesDatabase.push({
+                    id: Date.now() + index,
+                    text: data.text,
+                    narasi: narasi,
+                    capaian: capaian,
+                    categoryId: data.categoryId,
+                    categoryName: RK_CATEGORIES[data.categoryId],
+                    timestamp: date,
+                    evidence: data.evidence
+                });
+            });
+            
+            updateSummary();
+            updateDashboard();
+            
+            alert('✅ 10 Data dummy berhasil dimuat!\n\nSilakan cek Dashboard untuk melihat contoh narasi AI dan capaian yang terstruktur.');
+        }
+
+        function generateReport(type) {
+            closeReportOptions();
+            
+            const modal = document.getElementById('reportModal');
+            const now = new Date();
+            const period = now.toLocaleDateString('id-ID', { month: 'long', year: 'numeric' });
+            
+            document.getElementById('reportPeriod').textContent = period;
+            
+            // Filter data berdasarkan type
+            let reportData = activitiesDatabase;
+            let reportTitle = '';
+            
+            if (type !== 'all') {
+                reportData = activitiesDatabase.filter(a => a.categoryId === type);
+                reportTitle = ` - ${RK_CATEGORIES[type]}`;
+            }
+            
+            // Generate summary
+            const counts = {};
+            RK_CATEGORIES.forEach((_, idx) => counts[idx] = 0);
+            
+            reportData.forEach(activity => {
+                counts[activity.categoryId]++;
+            });
+            
+            const summaryHtml = Object.entries(counts)
+                .filter(([id, count]) => count > 0)
+                .map(([id, count]) => {
+                    return `
+                        <div class="report-rk-item">
+                            <div class="report-rk-header">
+                                <div class="report-rk-title">${RK_CATEGORIES[id]}</div>
+                                <div class="report-rk-count">${count}</div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            
+            document.getElementById('reportSummary').innerHTML = summaryHtml;
+            
+            // Detail aktivitas untuk laporan per RK
+            const detailSection = document.getElementById('detailSection');
+            const detailRKTitle = document.getElementById('detailRKTitle');
+            const reportDetail = document.getElementById('reportDetail');
+            
+            if (type !== 'all') {
+                detailSection.style.display = 'block';
+                detailRKTitle.textContent = reportTitle;
+                
+                let detailHtml = '<div style="background: #F5F8FA; padding: 15px; border-radius: 8px;">';
+                reportData.forEach((activity, index) => {
+                    const date = activity.timestamp.toLocaleDateString('id-ID', { 
+                        day: '2-digit', 
+                        month: 'short', 
+                        year: 'numeric' 
+                    });
+                    
+                    detailHtml += `
+                        <div style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #E0E0E0;">
+                            <div style="font-weight: 600; color: #1E88E5; margin-bottom: 5px;">${index + 1}. ${date}</div>
+                            <div style="font-size: 13px; margin-bottom: 5px;"><strong>Input:</strong> ${activity.text}</div>
+                            <div style="font-size: 13px; margin-bottom: 5px;"><strong>Kegiatan:</strong> ${activity.narasi}</div>
+                            <div style="font-size: 13px; margin-bottom: 5px;"><strong>Capaian:</strong> ${activity.capaian}</div>
+                            <div style="font-size: 13px;"><strong>Bukti:</strong> ${activity.evidence.length > 0 ? '📎 ' + activity.evidence.length + ' file' : 'Tidak ada'}</div>
+                        </div>
+                    `;
+                });
+                detailHtml += '</div>';
+                
+                reportDetail.innerHTML = detailHtml;
+            } else {
+                detailSection.style.display = 'none';
+            }
+            
+            // Stats
+            const uniqueDays = new Set(reportData.map(a => 
+                a.timestamp.toDateString()
+            )).size;
+            const avgPerDay = uniqueDays > 0 ? (reportData.length / uniqueDays).toFixed(1) : 0;
+            const totalEvidence = reportData.reduce((sum, a) => sum + a.evidence.length, 0);
+            
+            document.getElementById('reportTotalActivities').textContent = reportData.length;
+            document.getElementById('reportActiveDays').textContent = uniqueDays;
+            document.getElementById('reportAvgPerDay').textContent = avgPerDay;
+            document.getElementById('reportEvidenceCount').textContent = totalEvidence;
+            
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('reportModal').classList.remove('active');
+        }
+
+        function downloadReport() {
+            alert('📥 Fitur download PDF akan tersedia di versi production!\n\nLaporan akan berisi:\n✅ Data lengkap aktivitas per RK\n✅ Narasi terstruktur dan capaian\n✅ Grafik statistik kinerja\n✅ Bukti dukung lengkap\n✅ Tanda tangan digital\n✅ Format sesuai e-Kinerja BPS');
+        }
+
+        // Tab navigation
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const viewId = tab.dataset.view + '-view';
+                document.getElementById(viewId).classList.add('active');
+            });
+        });
+
+        // Auto reminder
+        function startReminder() {
+            reminderInterval = setInterval(() => {
+                messageCount++;
+                if (messageCount % 3 === 0) {
+                    const reminderMessages = [
+                        '⏰ Hai! Sedang mengerjakan apa sekarang?',
+                        '🔔 Waktunya update! Ada aktivitas baru yang ingin dicatat?',
+                        '💡 Jangan lupa catat aktivitas Anda hari ini ya!',
+                        '📝 Sudah berapa aktivitas yang diselesaikan hari ini?',
+                        '🎯 Yuk dokumentasikan progress kerja Anda!'
+                    ];
+                    const randomReminder = reminderMessages[Math.floor(Math.random() * reminderMessages.length)];
+                    addMessage(randomReminder, true);
+                }
+            }, 30000);
+        }
+
+        startReminder();
+
+        document.getElementById('reportModal').addEventListener('click', (e) => {
+            if (e.target.id === 'reportModal') {
+                closeModal();
+            }
+        });
+
+        console.log('🤖 Kawa-AI Complete v3.0 - Ready!');
+        console.log('📊 Features: AI Narasi + Capaian + WhatsApp Style + 10 Dummy Data');
+    </script>
+</body>
+</html>
